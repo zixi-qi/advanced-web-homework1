@@ -26,6 +26,10 @@ public class StudentAspect {
     @Before("log()")
     public void logRequest(JoinPoint joinPoint){
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes==null){
+            //happens when testing
+            return;
+        }
         HttpServletRequest request = attributes.getRequest();
         //log url
         logger.info("url={}",request.getRequestURL());
@@ -42,7 +46,8 @@ public class StudentAspect {
 
     @AfterReturning(pointcut = "log()",returning = "object")
     public void logResponse(Object object){
-        logger.info("response={}",object.toString());
+        String msg = object==null?"null":object.toString();
+        logger.info("response={}",msg);
     }
 
 
